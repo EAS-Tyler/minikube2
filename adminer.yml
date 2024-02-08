@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer-deployment
+  namespace: k8react
+  labels:
+    app: adminer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+      - name: adminer
+        image: adminer
+        ports:
+        - containerPort: 8080
+        # env:
+        # - name: MONGO_INITDB_ROOT_USERNAME
+        #   valueFrom:
+        #     secretKeyRef: 
+        #       name: maria-secret
+        #       key: maria-user
+        # - name: MARIADB_ROOT_PASSWORD
+        #   valueFrom:
+        #     secretKeyRef: 
+        #       name: maria-secret
+        #       key: maria-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer-service
+  namespace: k8react
+spec:
+  type: NodePort
+  selector:
+    app: adminer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30550
